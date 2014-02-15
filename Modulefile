@@ -1,0 +1,10 @@
+name          'garethr-remotesyslog'
+version       '0.1.0'
+source        'https://github.com/garethr/garethr-remotesyslog'
+author        'garethr'
+license       'Apache License, Version 2.0'
+summary       'Install and configure the remote_syslog service from Papertrail'
+project_page  'https://github.com/garethr/garethr-remotesyslog'
+
+dependency    'puppetlabs/stdlib'
+dependency    'puppetlabs/ruby'
