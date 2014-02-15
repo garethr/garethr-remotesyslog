@@ -3,6 +3,10 @@
 tool from Papertrail which can collect lines from a series of log files
 and send them off to a remote syslog server.
 
+This module is also available on the [Puppet Forge](https://forge.puppetlabs.com/garethr/remotesyslog).
+
+[![Build Status](https://secure.travis-ci.org/garethr/garethr-remotesyslog.png)](http://travis-ci.org/garethr/garethr-remotesyslog)
+
 # Usage
 
 ```puppet
