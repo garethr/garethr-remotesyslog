@@ -7,7 +7,7 @@ This module is also available on the [Puppet Forge](https://forge.puppetlabs.com
 
 [![Build Status](https://secure.travis-ci.org/garethr/garethr-remotesyslog.png)](http://travis-ci.org/garethr/garethr-remotesyslog)
 
-# Usage
+## Usage
 
 ```puppet
 class { 'remotesyslog':
@@ -19,7 +19,7 @@ class { 'remotesyslog':
 }
 ```
 
-# Alternatives and inspiration
+## Alternatives and inspiration
 
 A few Papertrail modules already exist, for example from
 [davidwinter](https://github.com/davidwinter/puppet-papertrail) and from
