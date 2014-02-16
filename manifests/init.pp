@@ -23,7 +23,6 @@ class remotesyslog (
 
   validate_array($logs)
   validate_re($::osfamily, '^Debian$', 'This module only supports Debian based systems')
-  validate_string($port)
 
   unless $port {
     fail('You must provide a port')
