@@ -17,6 +17,8 @@ describe 'remotesyslog' do
 
       it { should contain_class('ruby') }
       it { should contain_package('libssl-dev') }
+      it { should contain_package('ruby-dev') }
+      it { should contain_package('build-essential') }
 
       it { should contain_file('/etc/init/remote_syslog.conf') }
       it { should contain_file('/etc/init.d/remote_syslog').with_ensure('link') }
