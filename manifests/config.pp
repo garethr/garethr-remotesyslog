@@ -18,6 +18,7 @@ class remotesyslog::config {
         file{'/etc/init.d/remote_syslog':
             ensure => file,
             source => 'puppet:///modules/remotesyslog/etc/init/remote_syslog.init.d',
+            mode => 0755,
         }
     }
     default: { fail("Operating System ${::operatingsystem} not supported by remotesyslog!") }
