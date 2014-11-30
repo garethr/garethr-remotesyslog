@@ -1,58 +1,73 @@
 require 'spec_helper'
 
 describe 'remotesyslog' do
-  context 'supported operating systems' do
-    let(:facts) {{ :osfamily => 'Debian' }}
-    describe "remotesyslog class without any parameters on Debian" do
-      let(:params) {{ :port => 12345 }}
-      it { should compile.with_all_deps }
+  %w(Debian Ubuntu).each do |operating_system|
+    context "supported Operating System: #{operating_system}" do
+      let(:facts) {
+        {:osfamily => 'Debian',
+         :operatingsystem => operating_system}
+      }
+      describe "remotesyslog class without any parameters" do
+        let(:params) { {:port => 12345} }
+        it { should compile.with_all_deps }
 
-      it { should contain_class('remotesyslog::params') }
-      it { should contain_class('remotesyslog::install').that_comes_before('remotesyslog::config') }
-      it { should contain_class('remotesyslog::config') }
-      it { should contain_class('remotesyslog::service').that_subscribes_to('remotesyslog::config') }
+        it { should contain_class('remotesyslog::params') }
+        it { should contain_class('remotesyslog::install').that_comes_before('remotesyslog::config') }
+        it { should contain_class('remotesyslog::config') }
+        it { should contain_class('remotesyslog::service').that_subscribes_to('remotesyslog::config') }
 
-      it { should contain_service('remote_syslog') }
-      it { should contain_package('remote_syslog').with_provider('gem') }
+        it { should contain_service('remote_syslog') }
+        it { should contain_package('remote_syslog').with_provider('gem') }
 
-      it { should contain_class('ruby') }
-      it { should contain_package('libssl-dev') }
-      it { should contain_package('ruby-dev') }
-      it { should contain_package('build-essential') }
+        it { should contain_class('ruby') }
+        it { should contain_package('libssl-dev') }
+        it { should contain_package('ruby-dev') }
+        it { should contain_package('build-essential') }
 
-      it { should contain_file('/etc/init/remote_syslog.conf') }
-      it { should contain_file('/etc/init.d/remote_syslog').with_ensure('link') }
-      it { should contain_file('/etc/log_files.yml').with_content(/logs\.papertrailapp\.com/) }
-    end
+        it { should contain_file('/etc/log_files.yml').with_content(/logs\.papertrailapp\.com/) }
 
-    describe "passing a custom host" do
-      let(:params) {{ :host => 'logs.example.com', :port => 12345 }}
-      it { should contain_file('/etc/log_files.yml').with_content(/logs\.example\.com/) }
-    end
+        if operating_system == "Ubuntu"
+          describe "Ubuntu Specific init system" do
+            it { should contain_file('/etc/init/remote_syslog.conf') }
+            it { should contain_file('/etc/init.d/remote_syslog').with_ensure('link') }
+          end
+        end
 
-    describe "not passing a custom port" do
-      it { expect { should contain_package('remotesyslog') }.to raise_error(Puppet::Error, /You must provide a port/) }
-    end
+        if operating_system == "Debian"
+          describe "Debian Specific init system" do
+            it { should contain_file('/etc/init.d/remote_syslog') }
+          end
+        end
+      end
 
-    describe "passing a custom port" do
-      let(:params) {{ :port => 12345 }}
-      it { should contain_file('/etc/log_files.yml').with_content(/port: 12345/) }
-    end
+      describe "passing a custom host" do
+        let(:params) { {:host => 'logs.example.com', :port => 12345} }
+        it { should contain_file('/etc/log_files.yml').with_content(/logs\.example\.com/) }
+      end
 
-    describe "passing log files to monitor" do
-      let(:params) {{ :logs => ['/var/log/1.log', '/var/log/2.log'], :port => 12345 }}
-      it { should contain_file('/etc/log_files.yml').with_content(/var\/log\/1\.log/) }
-    end
+      describe "not passing a custom port" do
+        it { expect { should contain_package('remotesyslog') }.to raise_error(Puppet::Error, /You must provide a port/) }
+      end
 
-    describe "passing invalid log files to monitor" do
-      let(:params) {{ :logs => 'not an array'}}
-      it { expect { should contain_package('remotesyslog') }.to raise_error(Puppet::Error) }
+      describe "passing a custom port" do
+        let(:params) { {:port => 12345} }
+        it { should contain_file('/etc/log_files.yml').with_content(/port: 12345/) }
+      end
+
+      describe "passing log files to monitor" do
+        let(:params) { {:logs => ['/var/log/1.log', '/var/log/2.log'], :port => 12345} }
+        it { should contain_file('/etc/log_files.yml').with_content(/var\/log\/1\.log/) }
+      end
+
+      describe "passing invalid log files to monitor" do
+        let(:params) { {:logs => 'not an array'} }
+        it { expect { should contain_package('remotesyslog') }.to raise_error(Puppet::Error) }
+      end
     end
   end
-
   context 'unsupported operating system' do
     describe 'remotesyslog class without any parameters on RedHat' do
-      let(:facts) {{ :osfamily => 'RedHat'}}
+      let(:facts) { {:osfamily => 'RedHat'} }
 
       it { expect { should contain_package('remotesyslog') }.to raise_error(Puppet::Error) }
     end

@@ -6,7 +6,9 @@ describe 'remotesyslog class' do
     # Using puppet_apply as a helper
     it 'should work with no errors' do
       pp = <<-EOS
-      class { 'remotesyslog': }
+      class { 'remotesyslog':
+         port => 1234,
+      }
       EOS
 
       # Run it twice and test for idempotency
